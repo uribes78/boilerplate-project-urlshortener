@@ -37,7 +37,7 @@ const api = () => {
         let { id } = req.params;
 
         if (isNaN(id) || !urlShorts.has( Number(id) ))
-            return res.status(400).json({error: 'invalid url loading'}).end();
+            return res.status(400).json({error: 'invalid url'}).end();
 
         let url = urlShorts.get(Number(id));
         console.log("GET -> ", url);
@@ -60,7 +60,7 @@ const api = () => {
         }).catch(err => {
             console.log("Response -> ", err);
             res.status(400)
-                .json({error: 'invalid url shorting'})
+                .json({error: 'invalid url'})
                 .end();
         });
     });
