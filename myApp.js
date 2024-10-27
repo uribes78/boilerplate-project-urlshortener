@@ -17,10 +17,12 @@ const resolver = (url) => {
 const urlValidator = (url) => {
     try {
         let item = new URL(url);
-        console.log('Parsing -> ', item);
+        
+        if (!/^http/i.test(item.protocol))
+            throw new Error('Invalid protocol');
+
         return resolver(item.host);
     } catch (e) {
-        console.log(e);
         return Promise.reject(e);
     }
 };
@@ -40,26 +42,25 @@ const api = () => {
             return res.status(400).json({error: 'invalid url'}).end();
 
         let url = urlShorts.get(Number(id));
-        console.log("GET -> ", url);
+
         res.redirect(url);
     });
     
     routes.post('/shorturl', (req, res) => {
         let { url } = req.body;
 
-        console.log("Validate -> ", url);
         urlValidator(url).then(addr => {
             let shortId = urlShorts.size + 1;
 
             urlShorts.set(shortId, url);
-            console.log(urlShorts);
+
             res.status(200).json({
                 original_url: url,
                 short_url: shortId
             });
         }).catch(err => {
             console.log("Response -> ", err);
-            res.status(400)
+            res.status(200)
                 .json({error: 'invalid url'})
                 .end();
         });
